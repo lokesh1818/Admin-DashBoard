@@ -1,0 +1,68 @@
+.container {
+  padding: 10px;
+}
+
+.form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form input,
+.form select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.form button {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+}
+
+.search {
+  margin-bottom: 15px;
+  padding: 8px;
+  width: 300px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+table {
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+th {
+  text-align: left;
+  padding: 12px;
+  background: #f9fafb;
+}
+
+td {
+  padding: 12px;
+}
+
+.delete {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.status-active {
+  color: green;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: bold;
+}
