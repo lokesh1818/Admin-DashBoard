@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api';
 import Chart from 'chart.js/auto';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,16 +11,25 @@ import Chart from 'chart.js/auto';
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   totalUsers = 0;
   activeUsers = 0;
   inactiveUsers = 0;
 
+  private sub!: Subscription;
+
   constructor(private api: ApiService) {}
 
   ngOnInit() {
     this.loadStats();
+    this.sub = this.api.userUpdated.subscribe(() => {
+      this.loadStats();
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   loadStats() {
@@ -54,7 +64,7 @@ export class DashboardComponent implements OnInit {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false   
+        maintainAspectRatio: false
       }
     });
   }

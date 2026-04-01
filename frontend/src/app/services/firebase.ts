@@ -1,6 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut
+} from 'firebase/auth';
+import { Router } from '@angular/router';
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-cz95xFaEDWHgLh8--LheZEjGCsIKlyg",
@@ -19,13 +26,28 @@ export class FirebaseService {
 
   auth;
 
-  constructor() {
+  constructor(private router: Router, private ngZone: NgZone) {
     const app = initializeApp(firebaseConfig);
     this.auth = getAuth(app);
+
+    // 🔥 FIX: Handle auth state globally
+    onAuthStateChanged(this.auth, (user) => {
+      this.ngZone.run(() => {
+        if (user) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.router.navigate(['/login']);
+        }
+      });
+    });
   }
 
   loginWithGoogle() {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(this.auth, provider);
+  }
+
+  logout() {
+    return signOut(this.auth);
   }
 }

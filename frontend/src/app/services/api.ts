@@ -7,17 +7,18 @@ import { Subject } from 'rxjs';
 })
 export class ApiService {
 
-  baseUrl = 'http://localhost:5000/api/users';
+  private baseUrl = 'http://localhost:5000/api/users';
 
-  
   userUpdated = new Subject<void>();
 
   constructor(private http: HttpClient) {}
 
+  
   getUsers() {
     return this.http.get<any[]>(this.baseUrl);
   }
 
+  
   addUser(user: any) {
     return this.http.post(this.baseUrl, user);
   }
@@ -26,7 +27,8 @@ export class ApiService {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
-  googleLogin(data: any) {
-    return this.http.post(`${this.baseUrl}/google-login`, data);
+  
+  googleLogin(userData: any) {
+    return this.http.post(`${this.baseUrl}/google-login`, userData);
   }
 }

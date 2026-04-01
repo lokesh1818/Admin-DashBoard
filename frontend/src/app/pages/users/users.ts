@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-users',
@@ -10,11 +11,10 @@ import { ApiService } from '../../services/api';
   templateUrl: './users.html',
   styleUrls: ['./users.css']
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
 
   users: any[] = [];
   filteredUsers: any[] = [];
-
   searchText = '';
 
   newUser = {
@@ -23,14 +23,25 @@ export class UsersComponent implements OnInit {
     status: 'active'
   };
 
+  private sub!: Subscription;
+
   constructor(private api: ApiService) {}
 
   ngOnInit() {
     this.loadUsers();
+
+    // 🔥 Listen for updates
+    this.sub = this.api.userUpdated.subscribe(() => {
+      this.loadUsers();
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   loadUsers() {
-    this.api.getUsers().subscribe((data: any) => {
+    this.api.getUsers().subscribe((data: any[]) => {
       this.users = data;
       this.filteredUsers = data;
     });
@@ -41,14 +52,15 @@ export class UsersComponent implements OnInit {
 
     this.api.addUser(this.newUser).subscribe(() => {
       this.newUser = { name: '', email: '', status: 'active' };
-      this.loadUsers();
-      this.api.userUpdated.next(); 
+
+      // 🔥 Notify all components
+      this.api.userUpdated.next();
     });
   }
 
   deleteUser(id: string) {
     this.api.deleteUser(id).subscribe(() => {
-      this.loadUsers();
+      // 🔥 Notify all components
       this.api.userUpdated.next();
     });
   }

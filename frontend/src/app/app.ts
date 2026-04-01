@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { LoginComponent } from './login/login';   
+import { LoginComponent } from './login/login';
 
 @Component({
   selector: 'app-root',
@@ -10,26 +10,39 @@ import { LoginComponent } from './login/login';
     RouterOutlet,
     RouterModule,
     CommonModule,
-    LoginComponent   
+    LoginComponent
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class AppComponent {
 
-  constructor(private router: Router) {}
+  isLoggedIn = false;
+  user: any = null;
+
+  constructor(private router: Router) {
+    this.loadUser();
+  }
+
+  // 🔥 Load user from localStorage
+  loadUser() {
+    const data = localStorage.getItem('user');
+
+    if (data) {
+      this.user = JSON.parse(data);
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
+    }
+  }
 
   logout() {
     localStorage.removeItem('user');
+    this.isLoggedIn = false;
     this.router.navigate(['/']);
   }
 
-  isLoggedIn() {
-    return !!localStorage.getItem('user');
-  }
-
   getUserName() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    return user.name || 'Admin';
+    return this.user?.name || 'Admin';
   }
 }
